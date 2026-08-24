@@ -9,29 +9,19 @@
 
 ## GitHub Pages
 
-GitHub Pages **не запускает `npm install`**. На сайт попадает только результат `npm run build` (папка `docs/`), а не исходники из корня репозитория.
+GitHub Pages **не запускает `npm install`**. На сайт попадает только результат `npm run build` (папка `docs/`).
 
-Workflow на каждый push в `main`:
+### Настройка Pages
 
-1. собирает проект в `docs/`;
-2. публикует `docs/` в ветку `gh-pages`;
-3. коммитит `docs/` в `main` (для деплоя из `/docs`).
+В **Settings → Pages → Build and deployment → Source** должно быть выбрано:
 
-### Настройка Pages (выбери один вариант)
+**GitHub Actions**
 
-**Вариант A — рекомендуется**
+Workflow `.github/workflows/deploy.yml` собирает проект и публикует `docs/` через официальный `deploy-pages`.
 
-- Settings → Pages → Source: `Deploy from a branch`
-- Branch: **`gh-pages`** / **`/ (root)`**
+Не используй `Deploy from a branch` + `main / (root)` — тогда GitHub отдаёт dev-версию `index.html` с `/src/js/app.js`.
 
-**Вариант B**
-
-- Settings → Pages → Source: `Deploy from a branch`
-- Branch: **`main`** / **`/docs`**
-
-**Не используй `main / (root)`** — тогда GitHub отдаёт dev-версию `index.html` с `/src/js/app.js`, и сайт не работает.
-
-После смены настройки подожди 1–2 минуты и обнови страницу с очисткой кэша (`Cmd+Shift+R`).
+После push в `main` дождись успешного workflow в **Actions** (1–2 мин), затем обнови страницу с очисткой кэша (`Cmd+Shift+R`).
 
 Сайт: `https://mikesherif.github.io/frt-bpmn-demo/`
 
