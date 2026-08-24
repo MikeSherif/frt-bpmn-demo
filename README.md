@@ -9,24 +9,31 @@
 
 ## GitHub Pages
 
-Проект деплоится через GitHub Actions (`.github/workflows/deploy.yml`).
+GitHub Pages **не запускает `npm install`**. На сайт попадает только результат `npm run build` (папка `docs/`), а не исходники из корня репозитория.
 
-Важно: несмотря на vanilla HTML/CSS/JS, GitHub Pages **не запускает `npm install`**. На Pages попадает только результат `npm run build` из папки `dist`. Исходники с `import` из npm-пакетов (`bpmn-js`) напрямую не работают — поэтому нельзя деплоить ветку `main` из корня.
+Workflow на каждый push в `main`:
 
-Workflow собирает проект и публикует `dist/` в ветку **`gh-pages`**.
+1. собирает проект в `docs/`;
+2. публикует `docs/` в ветку `gh-pages`;
+3. коммитит `docs/` в `main` (для деплоя из `/docs`).
 
-### Настройка Pages
+### Настройка Pages (выбери один вариант)
 
-1. Открой **Settings → Pages**.
-2. **Build and deployment → Source**: `Deploy from a branch`.
-3. **Branch**: `gh-pages` / `(root)`.
-4. Сохрани.
+**Вариант A — рекомендуется**
 
-После push в `main` подожди завершения workflow в **Actions** (1–2 мин).
+- Settings → Pages → Source: `Deploy from a branch`
+- Branch: **`gh-pages`** / **`/ (root)`**
+
+**Вариант B**
+
+- Settings → Pages → Source: `Deploy from a branch`
+- Branch: **`main`** / **`/docs`**
+
+**Не используй `main / (root)`** — тогда GitHub отдаёт dev-версию `index.html` с `/src/js/app.js`, и сайт не работает.
+
+После смены настройки подожди 1–2 минуты и обнови страницу с очисткой кэша (`Cmd+Shift+R`).
 
 Сайт: `https://mikesherif.github.io/frt-bpmn-demo/`
-
-Для project site настроен `base: '/frt-bpmn-demo/'` в `vite.config.js`.
 
 ## Быстрый старт
 
