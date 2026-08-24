@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Демонстрация просмотра и редактирования BPMN 2.0 в браузере" />
+    <title>BPMN Demo</title>
+    <script type="module" crossorigin src="/frt-bpmn-demo/assets/index-GCk8spLj.js"></script>
+    <link rel="stylesheet" crossorigin href="/frt-bpmn-demo/assets/index-ZQaeCS3o.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="BPMN Demo">
+        <span class="brand-mark">B</span>
+        <span><strong>BPMN Demo</strong><small>Process workspace</small></span>
+      </a>
+      <nav class="mode-tabs" aria-label="Режим приложения">
+        <button class="mode-tab is-active" type="button" data-mode="viewer">Viewer</button>
+        <button class="mode-tab" type="button" data-mode="editor">Editor</button>
+      </nav>
+    </header>
+
+    <main class="app-main">
+      <section id="viewer-mode" class="mode-view" aria-labelledby="viewer-heading">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">BPMN 2.0 VIEWER</span>
+            <h1 id="viewer-heading">Просмотр процесса</h1>
+            <p>Интерактивная схема без возможности изменения модели</p>
+          </div>
+          <span class="status-badge"><i></i> Demo loaded</span>
+        </div>
+
+        <div class="toolbar" aria-label="Инструменты просмотра">
+          <div class="toolbar-group">
+            <button class="icon-button" id="viewer-zoom-in" type="button" title="Увеличить">+</button>
+            <button class="icon-button" id="viewer-zoom-out" type="button" title="Уменьшить">−</button>
+            <button class="button" id="viewer-fit" type="button">Fit</button>
+            <button class="button" id="viewer-reset" type="button">Reset</button>
+            <button class="button" id="viewer-fullscreen" type="button">⛶ Fullscreen</button>
+          </div>
+          <span class="zoom-value">Zoom: <strong id="viewer-zoom-value">100%</strong></span>
+        </div>
+
+        <div class="viewer-layout">
+          <div class="diagram-card" id="viewer-workspace">
+            <div id="viewer-canvas" class="bpmn-canvas" aria-label="BPMN диаграмма"></div>
+          </div>
+          <aside class="side-panel viewer-info">
+            <div class="panel-title">
+              <span class="panel-icon">⌁</span>
+              <div><h2>Выбранный элемент</h2><p>Нажмите на элемент схемы</p></div>
+            </div>
+            <dl class="element-details">
+              <div><dt>Type</dt><dd id="selected-type">—</dd></div>
+              <div><dt>ID</dt><dd id="selected-id">—</dd></div>
+              <div><dt>Name</dt><dd id="selected-name">—</dd></div>
+              <div><dt>Documentation</dt><dd id="selected-documentation">—</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section id="editor-mode" class="mode-view" aria-labelledby="editor-heading" hidden>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">BPMN 2.0 MODELER</span>
+            <h1 id="editor-heading">Редактор процесса</h1>
+            <p>Создание, настройка, импорт и экспорт BPMN-моделей</p>
+          </div>
+          <span class="status-badge status-edit"><i></i> Editing mode</span>
+        </div>
+
+        <div class="toolbar editor-toolbar" aria-label="Инструменты редактора">
+          <div class="toolbar-group">
+            <button class="button" id="editor-import" type="button">↑ Import BPMN</button>
+            <button class="button" id="editor-load-demo" type="button">Load Demo</button>
+            <button class="button button-primary" id="editor-save" type="button">Save BPMN</button>
+            <button class="button" id="editor-export-svg" type="button">Export SVG</button>
+          </div>
+          <span class="toolbar-divider"></span>
+          <div class="toolbar-group">
+            <button class="icon-button" id="editor-undo" type="button" title="Отменить">↶</button>
+            <button class="icon-button" id="editor-redo" type="button" title="Повторить">↷</button>
+            <button class="icon-button" id="editor-zoom-in" type="button" title="Увеличить">+</button>
+            <button class="icon-button" id="editor-zoom-out" type="button" title="Уменьшить">−</button>
+            <button class="button" id="editor-fit" type="button">Fit</button>
+          </div>
+          <input id="bpmn-file-input" type="file" accept=".bpmn,.xml,text/xml,application/xml" hidden />
+        </div>
+
+        <div class="storage-bar">
+          <span><strong>Mock API / localStorage</strong><small>BPMN XML хранится внутри JSON-обёртки</small></span>
+          <div class="toolbar-group">
+            <button class="text-button" id="storage-save" type="button">Save to LocalStorage</button>
+            <button class="text-button" id="storage-load" type="button">Load from LocalStorage</button>
+            <button class="text-button danger" id="storage-clear" type="button">Clear Storage</button>
+          </div>
+        </div>
+
+        <div class="editor-layout">
+          <div class="diagram-card editor-card">
+            <div id="editor-canvas" class="bpmn-canvas" aria-label="Редактор BPMN"></div>
+          </div>
+          <aside id="properties-panel" class="properties-panel" aria-label="Свойства элемента"></aside>
+        </div>
+      </section>
+
+      <section class="capabilities" aria-labelledby="capabilities-heading">
+        <div><span class="eyebrow">PROOF OF CONCEPT</span><h2 id="capabilities-heading">BPMN Demo Capabilities</h2></div>
+        <ul>
+          <li>BPMN 2.0 Viewer</li><li>BPMN 2.0 Modeler</li><li>Drag &amp; Drop</li>
+          <li>BPMN Properties</li><li>Import BPMN</li><li>Export BPMN</li>
+          <li>Export SVG</li><li>XML storage</li><li>Zoom / Pan</li>
+          <li>Undo / Redo</li><li>API integration concept</li>
+        </ul>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="xml-modal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="xml-modal-title">
+        <header>
+          <div><span class="eyebrow">BPMN XML</span><h2 id="xml-modal-title">Схема готова к сохранению</h2></div>
+          <button class="modal-close" id="xml-modal-close" type="button" aria-label="Закрыть">×</button>
+        </header>
+        <textarea id="xml-output" readonly spellcheck="false"></textarea>
+        <footer>
+          <span>Стандартный BPMN 2.0 XML</span>
+          <div class="toolbar-group">
+            <button class="button" id="xml-copy" type="button">Copy</button>
+            <button class="button button-primary" id="xml-download" type="button">Download .bpmn</button>
+          </div>
+        </footer>
+      </section>
+    </div>
+
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
