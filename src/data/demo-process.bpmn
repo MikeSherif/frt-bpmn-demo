@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_Application"
+  targetNamespace="http://example.com/bpmn/demo">
+  <bpmn:collaboration id="Collaboration_Application">
+    <bpmn:participant id="Participant_Company" name="Обработка заявки" processRef="Process_Application" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Application" name="Обработка заявки" isExecutable="false">
+    <bpmn:documentation>Демонстрационный процесс обработки клиентской заявки.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_Application">
+      <bpmn:lane id="Lane_Client" name="Клиентский отдел">
+        <bpmn:flowNodeRef>StartEvent_Request</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Receive</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Valid</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Reject</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Rejected</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Manager" name="Руководитель">
+        <bpmn:flowNodeRef>Task_Approve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Fork</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Join</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Backoffice" name="Бэк-офис">
+        <bpmn:flowNodeRef>Task_Documents</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Data</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Execute</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Done</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_Request" name="Заявка получена">
+      <bpmn:outgoing>Flow_Start_Receive</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_Receive" name="Получение заявки">
+      <bpmn:documentation>Зарегистрировать заявку и контактные данные клиента.</bpmn:documentation>
+      <bpmn:incoming>Flow_Start_Receive</bpmn:incoming>
+      <bpmn:outgoing>Flow_Receive_Check</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Check" name="Проверка заявки">
+      <bpmn:documentation>Проверить обязательные поля и комплектность заявки.</bpmn:documentation>
+      <bpmn:incoming>Flow_Receive_Check</bpmn:incoming>
+      <bpmn:outgoing>Flow_Check_Valid</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_Valid" name="Заявка корректна?" default="Flow_Invalid">
+      <bpmn:incoming>Flow_Check_Valid</bpmn:incoming>
+      <bpmn:outgoing>Flow_Valid</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Invalid</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Start_Receive" sourceRef="StartEvent_Request" targetRef="Task_Receive" />
+    <bpmn:sequenceFlow id="Flow_Receive_Check" sourceRef="Task_Receive" targetRef="Task_Check" />
+    <bpmn:sequenceFlow id="Flow_Check_Valid" sourceRef="Task_Check" targetRef="Gateway_Valid" />
+    <bpmn:sequenceFlow id="Flow_Valid" name="Да" sourceRef="Gateway_Valid" targetRef="Task_Approve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">approved == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Invalid" name="Нет" sourceRef="Gateway_Valid" targetRef="Task_Reject" />
+    <bpmn:userTask id="Task_Approve" name="Согласование">
+      <bpmn:documentation>Руководитель принимает решение по корректной заявке.</bpmn:documentation>
+      <bpmn:incoming>Flow_Valid</bpmn:incoming>
+      <bpmn:outgoing>Flow_Approve_Fork</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_Reject" name="Отклонение заявки">
+      <bpmn:documentation>Автоматически отправить клиенту причину отклонения.</bpmn:documentation>
+      <bpmn:incoming>Flow_Invalid</bpmn:incoming>
+      <bpmn:outgoing>Flow_Reject_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_Rejected" name="Заявка отклонена">
+      <bpmn:incoming>Flow_Reject_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:parallelGateway id="Gateway_Fork" name="Параллельные проверки">
+      <bpmn:incoming>Flow_Approve_Fork</bpmn:incoming>
+      <bpmn:outgoing>Flow_Fork_Documents</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Fork_Data</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="Task_Documents" name="Проверка документов">
+      <bpmn:incoming>Flow_Fork_Documents</bpmn:incoming>
+      <bpmn:outgoing>Flow_Documents_Join</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_Data" name="Проверка данных">
+      <bpmn:documentation>Автоматическая проверка данных во внешних системах.</bpmn:documentation>
+      <bpmn:incoming>Flow_Fork_Data</bpmn:incoming>
+      <bpmn:outgoing>Flow_Data_Join</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_Join" name="Проверки завершены">
+      <bpmn:incoming>Flow_Documents_Join</bpmn:incoming>
+      <bpmn:incoming>Flow_Data_Join</bpmn:incoming>
+      <bpmn:outgoing>Flow_Join_Execute</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Task_Execute" name="Выполнение заявки">
+      <bpmn:documentation>Создать результат обработки в учётной системе.</bpmn:documentation>
+      <bpmn:incoming>Flow_Join_Execute</bpmn:incoming>
+      <bpmn:outgoing>Flow_Execute_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_Done" name="Заявка выполнена">
+      <bpmn:incoming>Flow_Execute_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Approve_Fork" sourceRef="Task_Approve" targetRef="Gateway_Fork" />
+    <bpmn:sequenceFlow id="Flow_Reject_End" sourceRef="Task_Reject" targetRef="EndEvent_Rejected" />
+    <bpmn:sequenceFlow id="Flow_Fork_Documents" sourceRef="Gateway_Fork" targetRef="Task_Documents" />
+    <bpmn:sequenceFlow id="Flow_Fork_Data" sourceRef="Gateway_Fork" targetRef="Task_Data" />
+    <bpmn:sequenceFlow id="Flow_Documents_Join" sourceRef="Task_Documents" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="Flow_Data_Join" sourceRef="Task_Data" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="Flow_Join_Execute" sourceRef="Gateway_Join" targetRef="Task_Execute" />
+    <bpmn:sequenceFlow id="Flow_Execute_End" sourceRef="Task_Execute" targetRef="EndEvent_Done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Application">
+    <bpmndi:BPMNPlane id="BPMNPlane_Application" bpmnElement="Collaboration_Application">
+      <bpmndi:BPMNShape id="Participant_Company_di" bpmnElement="Participant_Company" isHorizontal="true">
+        <dc:Bounds x="80" y="80" width="1840" height="600" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Client_di" bpmnElement="Lane_Client" isHorizontal="true">
+        <dc:Bounds x="110" y="80" width="1810" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Manager_di" bpmnElement="Lane_Manager" isHorizontal="true">
+        <dc:Bounds x="110" y="280" width="1810" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Backoffice_di" bpmnElement="Lane_Backoffice" isHorizontal="true">
+        <dc:Bounds x="110" y="440" width="1810" height="240" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_Request_di" bpmnElement="StartEvent_Request">
+        <dc:Bounds x="160" y="157" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="140" y="200" width="78" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Receive_di" bpmnElement="Task_Receive">
+        <dc:Bounds x="240" y="135" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Check_di" bpmnElement="Task_Check">
+        <dc:Bounds x="410" y="135" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Valid_di" bpmnElement="Gateway_Valid" isMarkerVisible="true">
+        <dc:Bounds x="585" y="150" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="566" y="120" width="89" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Reject_di" bpmnElement="Task_Reject">
+        <dc:Bounds x="700" y="110" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Rejected_di" bpmnElement="EndEvent_Rejected">
+        <dc:Bounds x="870" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="844" y="100" width="88" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Approve_di" bpmnElement="Task_Approve">
+        <dc:Bounds x="700" y="320" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Fork_di" bpmnElement="Gateway_Fork">
+        <dc:Bounds x="875" y="335" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="850" y="302" width="100" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Documents_di" bpmnElement="Task_Documents">
+        <dc:Bounds x="1010" y="465" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Data_di" bpmnElement="Task_Data">
+        <dc:Bounds x="1010" y="575" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Join_di" bpmnElement="Gateway_Join">
+        <dc:Bounds x="1220" y="540" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1200" y="600" width="90" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Execute_di" bpmnElement="Task_Execute">
+        <dc:Bounds x="1370" y="525" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Done_di" bpmnElement="EndEvent_Done">
+        <dc:Bounds x="1580" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1555" y="590" width="88" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_Receive_di" bpmnElement="Flow_Start_Receive">
+        <di:waypoint x="196" y="175" /><di:waypoint x="240" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Receive_Check_di" bpmnElement="Flow_Receive_Check">
+        <di:waypoint x="360" y="175" /><di:waypoint x="410" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Check_Valid_di" bpmnElement="Flow_Check_Valid">
+        <di:waypoint x="530" y="175" /><di:waypoint x="585" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Valid_di" bpmnElement="Flow_Valid">
+        <di:waypoint x="610" y="200" /><di:waypoint x="610" y="360" /><di:waypoint x="700" y="360" />
+        <bpmndi:BPMNLabel><dc:Bounds x="620" y="268" width="15" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Invalid_di" bpmnElement="Flow_Invalid">
+        <di:waypoint x="635" y="175" /><di:waypoint x="670" y="175" /><di:waypoint x="670" y="150" /><di:waypoint x="700" y="150" />
+        <bpmndi:BPMNLabel><dc:Bounds x="650" y="126" width="22" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Reject_End_di" bpmnElement="Flow_Reject_End">
+        <di:waypoint x="820" y="150" /><di:waypoint x="870" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Approve_Fork_di" bpmnElement="Flow_Approve_Fork">
+        <di:waypoint x="820" y="360" /><di:waypoint x="875" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Fork_Documents_di" bpmnElement="Flow_Fork_Documents">
+        <di:waypoint x="900" y="385" /><di:waypoint x="900" y="505" /><di:waypoint x="1010" y="505" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Fork_Data_di" bpmnElement="Flow_Fork_Data">
+        <di:waypoint x="900" y="385" /><di:waypoint x="900" y="615" /><di:waypoint x="1010" y="615" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Documents_Join_di" bpmnElement="Flow_Documents_Join">
+        <di:waypoint x="1130" y="505" /><di:waypoint x="1180" y="505" /><di:waypoint x="1180" y="565" /><di:waypoint x="1220" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Data_Join_di" bpmnElement="Flow_Data_Join">
+        <di:waypoint x="1130" y="615" /><di:waypoint x="1180" y="615" /><di:waypoint x="1180" y="565" /><di:waypoint x="1220" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Join_Execute_di" bpmnElement="Flow_Join_Execute">
+        <di:waypoint x="1270" y="565" /><di:waypoint x="1370" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Execute_End_di" bpmnElement="Flow_Execute_End">
+        <di:waypoint x="1500" y="565" /><di:waypoint x="1580" y="565" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

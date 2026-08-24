@@ -1,0 +1,30 @@
+{
+  "name": "frt-bpmn-demo",
+  "version": "1.0.0",
+  "description": "Vanilla JavaScript BPMN viewer and modeler demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikeSherif/frt-bpmn-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MikeSherif/frt-bpmn-demo/issues"
+  },
+  "homepage": "https://mikesherif.github.io/frt-bpmn-demo/",
+  "dependencies": {
+    "bpmn-js": "^18.25.1",
+    "bpmn-js-properties-panel": "^5.65.0"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}
