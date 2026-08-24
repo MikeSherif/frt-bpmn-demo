@@ -11,15 +11,22 @@
 
 Проект деплоится через GitHub Actions (`.github/workflows/deploy.yml`).
 
-Важно: несмотря на vanilla HTML/CSS/JS, GitHub Pages не запускает `npm install`. На Pages попадает только результат `npm run build` из папки `dist`. Исходники с `import` из npm-пакетов (`bpmn-js`) напрямую не работают.
+Важно: несмотря на vanilla HTML/CSS/JS, GitHub Pages **не запускает `npm install`**. На Pages попадает только результат `npm run build` из папки `dist`. Исходники с `import` из npm-пакетов (`bpmn-js`) напрямую не работают — поэтому нельзя деплоить ветку `main` из корня.
+
+Workflow собирает проект и публикует `dist/` в ветку **`gh-pages`**.
+
+### Настройка Pages
+
+1. Открой **Settings → Pages**.
+2. **Build and deployment → Source**: `Deploy from a branch`.
+3. **Branch**: `gh-pages` / `(root)`.
+4. Сохрани.
+
+После push в `main` подожди завершения workflow в **Actions** (1–2 мин).
+
+Сайт: `https://mikesherif.github.io/frt-bpmn-demo/`
 
 Для project site настроен `base: '/frt-bpmn-demo/'` в `vite.config.js`.
-
-После push в `main` сайт будет доступен по адресу:
-
-`https://mikesherif.github.io/frt-bpmn-demo/`
-
-В настройках репозитория GitHub Pages source должен быть **GitHub Actions**, а не Deploy from branch.
 
 ## Быстрый старт
 
