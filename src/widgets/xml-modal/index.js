@@ -1,1 +1,1 @@
-export { XmlModal } from './XmlModal';
+export { XmlModal } from './ui/XmlModal';

@@ -1,1 +1,1 @@
-export { ViewerPage } from './ViewerPage';
+export { ViewerPage } from './ui/ViewerPage';

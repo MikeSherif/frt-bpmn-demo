@@ -1,1 +1,1 @@
-export { Capabilities } from './Capabilities';
+export { Capabilities } from './ui/Capabilities';

@@ -1,1 +1,2 @@
-export { ToastProvider, useToast } from './ToastProvider';
+export { ToastProvider } from './ui/ToastProvider';
+export { useToast } from './model/useToast';
