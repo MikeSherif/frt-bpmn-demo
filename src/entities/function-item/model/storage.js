@@ -1,8 +1,16 @@
 import { INITIAL_FUNCTIONS } from './data';
 
 const STORAGE_KEY = 'catalog:functions';
+const DATA_VERSION_KEY = 'catalog:functions:version';
+const CURRENT_VERSION = '2';
 
 function readAll() {
+  const ver = localStorage.getItem(DATA_VERSION_KEY);
+  if (ver !== CURRENT_VERSION) {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.setItem(DATA_VERSION_KEY, CURRENT_VERSION);
+    return INITIAL_FUNCTIONS.map((f) => ({ ...f }));
+  }
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return INITIAL_FUNCTIONS.map((f) => ({ ...f }));
   try {
