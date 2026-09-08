@@ -6,7 +6,7 @@ import { ElementInfo } from './ElementInfo';
 import styles from './BpmnViewerCanvas.module.css';
 
 export function BpmnViewerCanvas({ xml }) {
-  const showToast = useToast();
+  const { showToast } = useToast();
   const containerRef = useRef(null);
   const workspaceRef = useRef(null);
   const { zoom, selectedElement, zoomIn, zoomOut, fit, resetZoom } = useBpmnViewer(containerRef, xml);

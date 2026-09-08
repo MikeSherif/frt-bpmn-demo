@@ -1,69 +1,113 @@
 .header {
-  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.inner {
+  max-width: 1440px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 max(24px, calc((100vw - 1500px) / 2));
-  background: var(--navy);
-  color: white;
-  box-shadow: 0 4px 20px rgba(11, 25, 49, 0.2);
+  gap: 24px;
+  padding: 0 24px;
+  height: 56px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: inherit;
+  gap: 10px;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
-.brandMark {
-  display: grid;
-  place-items: center;
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 9px;
-  background: var(--blue);
+  border-radius: 8px;
+  background: #3182ce;
+  color: #fff;
   font-weight: 700;
-  font-size: 19px;
+  font-size: 0.85rem;
 }
 
-.brandTitle { display: block; font-size: 15px; letter-spacing: 0.01em; }
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a365d;
+  line-height: 1.2;
+}
+
 .brandSub {
-  display: block;
-  margin-top: 3px;
-  color: #9eabc0;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  font-size: 0.7rem;
+  color: #718096;
 }
 
-.tabs { align-self: stretch; display: flex; align-items: stretch; gap: 8px; }
+.nav {
+  display: flex;
+  gap: 16px;
+  margin-left: 24px;
+}
 
-.tab {
-  position: relative;
-  min-width: 92px;
-  border: 0;
-  background: transparent;
-  color: #9eabc0;
+.navLink {
+  font-size: 0.85rem;
+  color: #4a5568;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.navLink:hover {
+  background: #edf2f7;
+  color: #2d3748;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roleBtn {
+  padding: 5px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f7fafc;
   cursor: pointer;
+  font-size: 0.78rem;
+  font-family: inherit;
+  color: #4a5568;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.roleBtn:hover {
+  border-color: #3182ce;
+}
+
+.adminActive {
+  background: #ebf8ff;
+  border-color: #3182ce;
+  color: #2b6cb0;
   font-weight: 600;
-  font-size: inherit;
-  transition: color 0.2s;
 }
 
-.tab:hover, .tabActive { color: white; }
-
-.tabActive::after {
-  content: '';
-  position: absolute;
-  inset: auto 18px 0;
-  height: 3px;
-  border-radius: 3px 3px 0 0;
-  background: #4c83f3;
-}
-
-@media (max-width: 800px) {
-  .header { padding: 0 16px; }
-  .brandSub { display: none; }
+.user {
+  font-size: 0.8rem;
+  color: #4a5568;
+  white-space: nowrap;
 }

@@ -1,0 +1,44 @@
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 16px 0;
+  overflow-y: auto;
+  height: calc(100vh - 56px);
+  position: sticky;
+  top: 56px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 12px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.link {
+  display: block;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: #4a5568;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.12s;
+  line-height: 1.3;
+}
+
+.link:hover {
+  background: #edf2f7;
+  color: #2d3748;
+}
+
+.active {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  font-weight: 600;
+}

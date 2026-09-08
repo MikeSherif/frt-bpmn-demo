@@ -1,9 +1,10 @@
 import styles from './Button.module.css';
 
-export function Button({ variant = 'default', className = '', children, ...rest }) {
+export function Button({ variant = 'primary', className = '', children, ...rest }) {
   const cls = [
     styles.button,
     variant === 'primary' && styles.primary,
+    variant === 'secondary' && styles.secondary,
     className,
   ].filter(Boolean).join(' ');
 

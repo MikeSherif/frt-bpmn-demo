@@ -1,25 +1,32 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '@/shared/toast';
+import { AuthProvider } from './AuthContext';
 import { Header } from '@/widgets/header';
-import { XmlModalProvider } from './XmlModalContext';
-import { ViewerPage } from '@/pages/viewer';
-import { EditorPage } from '@/pages/editor';
+import { Sidebar } from '@/widgets/sidebar';
+import { CatalogMainPage } from '@/pages/catalog-main';
+import { DirectionPage } from '@/pages/direction';
+import { FunctionCardPage } from '@/pages/function-card';
+import styles from './styles/App.module.css';
 
-export function App() {
+export default function App() {
   return (
     <HashRouter>
-      <ToastProvider>
-        <XmlModalProvider>
+      <AuthProvider>
+        <ToastProvider>
           <Header />
-          <main className="app-main">
-            <Routes>
-              <Route path="/" element={<ViewerPage />} />
-              <Route path="/editor" element={<EditorPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-        </XmlModalProvider>
-      </ToastProvider>
+          <div className={styles.layout}>
+            <Sidebar />
+            <main className={styles.main}>
+              <Routes>
+                <Route path="/" element={<CatalogMainPage />} />
+                <Route path="/direction/:directionId" element={<DirectionPage />} />
+                <Route path="/function/:functionId" element={<FunctionCardPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+          </div>
+        </ToastProvider>
+      </AuthProvider>
     </HashRouter>
   );
 }

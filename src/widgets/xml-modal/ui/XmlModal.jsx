@@ -6,7 +6,7 @@ import { downloadText } from '@/shared/lib/download';
 import styles from './XmlModal.module.css';
 
 export function XmlModal({ xml, onClose }) {
-  const showToast = useToast();
+  const { showToast } = useToast();
 
   const handleCopy = useCallback(async () => {
     try {

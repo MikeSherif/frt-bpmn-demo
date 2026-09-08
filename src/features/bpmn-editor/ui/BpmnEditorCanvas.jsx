@@ -9,7 +9,7 @@ import { StorageBar } from './StorageBar';
 import styles from './BpmnEditorCanvas.module.css';
 
 export function BpmnEditorCanvas({ demoXml, onXmlSaved }) {
-  const showToast = useToast();
+  const { showToast } = useToast();
   const containerRef = useRef(null);
   const panelRef = useRef(null);
   const fileInputRef = useRef(null);

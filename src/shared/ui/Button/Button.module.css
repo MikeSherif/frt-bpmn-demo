@@ -23,6 +23,9 @@
 .primary { color: white; background: #2f6fed; border-color: #2f6fed; }
 .primary:hover { color: white; background: #245fd4; border-color: #245fd4; }
 
+.secondary { color: #4a5568; background: #edf2f7; border-color: #e2e8f0; }
+.secondary:hover { background: #e2e8f0; border-color: #cbd5e0; color: #2d3748; }
+
 .textButton {
   padding: 5px 8px;
   border-color: transparent;
