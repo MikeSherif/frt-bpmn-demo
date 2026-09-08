@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import { getDirections } from '@/entities/direction';
+import { useCatalogTick } from '@/shared/lib/catalogSync';
 import styles from './Sidebar.module.css';
 
 export function Sidebar() {
+  useCatalogTick();
   const directions = getDirections();
 
   return (

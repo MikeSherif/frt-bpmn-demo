@@ -24,3 +24,9 @@
   font-size: 0.85rem;
   color: #718096;
 }
+
+.adminBtns {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}

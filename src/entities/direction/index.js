@@ -1,4 +1,4 @@
-export { INITIAL_DIRECTIONS } from './model/data';
+export { INITIAL_DIRECTIONS, DIRECTION_ICONS } from './model/data';
 export {
   getDirections,
   getAllDirections,

@@ -66,8 +66,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   padding: 14px 20px;
   border-bottom: 1px solid #edf2f7;
+  flex-wrap: wrap;
+}
+
+.bpmnHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bpmnAdmin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .bpmnTitle {

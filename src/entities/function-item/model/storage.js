@@ -1,27 +1,57 @@
 import { INITIAL_FUNCTIONS } from './data';
+import { getAllVnds } from '@/entities/vnd';
+import { notifyCatalogChanged } from '@/shared/lib/catalogSync';
 
 const STORAGE_KEY = 'catalog:functions';
 const DATA_VERSION_KEY = 'catalog:functions:version';
-const CURRENT_VERSION = '2';
+const CURRENT_VERSION = '3';
+
+function siblingKey(f) {
+  return f.parentId ? `p:${f.parentId}` : `d:${f.directionId}:l:${f.level}`;
+}
+
+function assignSortOrders(items) {
+  const groups = new Map();
+  items.forEach((f) => {
+    const key = siblingKey(f);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(f);
+  });
+  groups.forEach((group) => {
+    group.forEach((f, i) => {
+      if (f.sortOrder == null) f.sortOrder = i + 1;
+    });
+  });
+  return items;
+}
+
+function bySortOrder(a, b) {
+  return (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || String(a.id).localeCompare(String(b.id), 'ru');
+}
+
+function hasBpmnXml(func) {
+  return Boolean(func.bpmnXml);
+}
 
 function readAll() {
   const ver = localStorage.getItem(DATA_VERSION_KEY);
   if (ver !== CURRENT_VERSION) {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.setItem(DATA_VERSION_KEY, CURRENT_VERSION);
-    return INITIAL_FUNCTIONS.map((f) => ({ ...f }));
+    return assignSortOrders(INITIAL_FUNCTIONS.map((f) => ({ ...f })));
   }
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return INITIAL_FUNCTIONS.map((f) => ({ ...f }));
+  if (!raw) return assignSortOrders(INITIAL_FUNCTIONS.map((f) => ({ ...f })));
   try {
-    return JSON.parse(raw);
+    return assignSortOrders(JSON.parse(raw));
   } catch {
-    return INITIAL_FUNCTIONS.map((f) => ({ ...f }));
+    return assignSortOrders(INITIAL_FUNCTIONS.map((f) => ({ ...f })));
   }
 }
 
 function writeAll(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  notifyCatalogChanged();
 }
 
 export function getAllFunctions() {
@@ -33,13 +63,15 @@ export function getFunctionById(id) {
 }
 
 export function getFunctionsByDirection(directionId) {
-  return readAll().filter(
-    (f) => f.directionId === Number(directionId) && f.level === 1 && f.status !== 'Архивная',
-  );
+  return readAll()
+    .filter((f) => f.directionId === Number(directionId) && f.level === 1 && f.status !== 'Архивная')
+    .sort(bySortOrder);
 }
 
 export function getChildFunctions(parentId) {
-  return readAll().filter((f) => f.parentId === parentId && f.status !== 'Архивная');
+  return readAll()
+    .filter((f) => f.parentId === parentId && f.status !== 'Архивная')
+    .sort(bySortOrder);
 }
 
 export function countFunctionsByDirection(directionId) {
@@ -75,22 +107,30 @@ export function filterFunctions(filters) {
     items = items.filter((f) => f.responsibleId === Number(filters.responsibleId));
   }
   if (filters.hasBpmn === true) {
-    items = items.filter((f) => f.bpmnXml !== null);
+    items = items.filter((f) => hasBpmnXml(f));
   }
   if (filters.hasBpmn === false) {
-    items = items.filter((f) => f.bpmnXml === null);
+    items = items.filter((f) => !hasBpmnXml(f));
+  }
+  if (filters.hasVnd === true || filters.hasVnd === false) {
+    const withVnd = new Set();
+    getAllVnds().forEach((v) => (v.functionIds || []).forEach((id) => withVnd.add(id)));
+    items = items.filter((f) => (filters.hasVnd === true ? withVnd.has(f.id) : !withVnd.has(f.id)));
   }
   if (filters.status) {
     items = items.filter((f) => f.status === filters.status);
   }
 
-  return items;
+  return items.sort(bySortOrder);
 }
 
 export function addFunction(func) {
   const all = readAll();
+  const siblings = all.filter((f) => siblingKey(f) === siblingKey(func));
+  const maxOrder = siblings.reduce((max, f) => Math.max(max, f.sortOrder ?? 0), 0);
   const newItem = {
     ...func,
+    sortOrder: func.sortOrder ?? maxOrder + 1,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     updatedBy: 12,
@@ -118,6 +158,15 @@ export function updateFunction(id, changes) {
 
 export function archiveFunction(id) {
   return updateFunction(id, { status: 'Архивная' });
+}
+
+export function reorderFunctions(orderedIds) {
+  const all = readAll();
+  orderedIds.forEach((id, index) => {
+    const item = all.find((f) => f.id === id);
+    if (item) item.sortOrder = index + 1;
+  });
+  writeAll(all);
 }
 
 export function deleteFunction(id) {

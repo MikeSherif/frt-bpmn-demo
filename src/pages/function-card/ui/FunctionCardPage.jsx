@@ -1,7 +1,7 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useAuth } from '@/app/AuthContext';
-import { getFunctionById, getChildFunctions, updateFunction } from '@/entities/function-item';
+import { getFunctionById, getChildFunctions, updateFunction, reorderFunctions } from '@/entities/function-item';
 import { getDirectionById } from '@/entities/direction';
 import { demoProcessXml } from '@/entities/bpmn-process';
 import { DEPARTMENTS, EMPLOYEES } from '@/entities/user';
@@ -14,6 +14,8 @@ import { ChangeHistory } from '@/features/change-history';
 import { Breadcrumbs } from '@/widgets/breadcrumbs';
 import { Tabs, Badge, Button } from '@/shared/ui';
 import { useToast } from '@/shared/toast';
+import { readTextFile, isValidBpmnXml, formatImportError } from '@/shared/lib/file';
+import { useCatalogTick } from '@/shared/lib/catalogSync';
 import styles from './FunctionCardPage.module.css';
 
 function getDeptName(id) {
@@ -36,9 +38,10 @@ export function FunctionCardPage() {
   const { functionId } = useParams();
   const { isAdmin } = useAuth();
   const { showToast } = useToast();
+  useCatalogTick();
   const [tab, setTab] = useState('info');
   const [showEdit, setShowEdit] = useState(false);
-  const [refresh, setRefresh] = useState(0);
+  const [, setRefresh] = useState(0);
 
   const func = getFunctionById(functionId);
   if (!func) return <Navigate to="/" replace />;
@@ -46,6 +49,7 @@ export function FunctionCardPage() {
   const direction = getDirectionById(func.directionId);
   const children = getChildFunctions(func.id);
   const parentFunc = func.parentId ? getFunctionById(func.parentId) : null;
+  const bump = () => setRefresh((v) => v + 1);
 
   const bpmnXml = func.bpmnXml === '__DEMO__' ? demoProcessXml : func.bpmnXml;
 
@@ -60,11 +64,45 @@ export function FunctionCardPage() {
     updateFunction(func.id, { status: 'Архивная' });
     addHistoryEntry({ functionId: func.id, field: 'status', oldValue: func.status, newValue: 'Архивная' });
     showToast('Функция архивирована', 'success');
-    setRefresh((v) => v + 1);
+    bump();
+  };
+
+  const handleBpmnUpload = async (file) => {
+    try {
+      const xml = await readTextFile(file);
+      if (!isValidBpmnXml(xml)) {
+        showToast('Файл не является корректным BPMN 2.0 XML', 'error');
+        return;
+      }
+      updateFunction(func.id, { bpmnXml: xml });
+      addHistoryEntry({
+        functionId: func.id,
+        field: 'bpmnXml',
+        oldValue: func.bpmnXml ? '(схема загружена)' : '(отсутствует)',
+        newValue: '(загружена BPMN-схема)',
+      });
+      showToast('BPMN-схема загружена', 'success');
+      bump();
+    } catch (err) {
+      showToast(formatImportError(err), 'error');
+    }
+  };
+
+  const handleBpmnRemove = () => {
+    if (!window.confirm('Удалить BPMN-схему этой функции?')) return;
+    updateFunction(func.id, { bpmnXml: null });
+    addHistoryEntry({
+      functionId: func.id,
+      field: 'bpmnXml',
+      oldValue: '(схема загружена)',
+      newValue: '(отсутствует)',
+    });
+    showToast('BPMN-схема удалена', 'success');
+    bump();
   };
 
   return (
-    <div className={styles.page} key={refresh}>
+    <div className={styles.page}>
       <Breadcrumbs items={crumbs} />
 
       <div className={styles.titleRow}>
@@ -86,7 +124,12 @@ export function FunctionCardPage() {
       {tab === 'info' && (
         <div className={styles.content}>
           <div className={styles.main}>
-            <BpmnSection xml={bpmnXml} />
+            <BpmnSection
+              xml={bpmnXml}
+              isAdmin={isAdmin}
+              onUpload={handleBpmnUpload}
+              onRemove={handleBpmnRemove}
+            />
 
             {children.length > 0 && (
               <section className={styles.section}>
@@ -94,13 +137,15 @@ export function FunctionCardPage() {
                   functions={children}
                   title="Функции 2-го уровня"
                   showDescription={true}
+                  sortable={isAdmin && children.length > 1}
+                  onReorder={(ids) => { reorderFunctions(ids); bump(); }}
                 />
               </section>
             )}
           </div>
 
           <div className={styles.sidebar}>
-            <VndPanel functionId={func.id} />
+            <VndPanel functionId={func.id} isAdmin={isAdmin} onChanged={bump} />
 
             <div className={styles.infoCard}>
               <h3 className={styles.infoTitle}>Общая информация</h3>
@@ -126,21 +171,47 @@ export function FunctionCardPage() {
           open={showEdit}
           onClose={() => setShowEdit(false)}
           editItem={func}
-          onSaved={() => setRefresh((v) => v + 1)}
+          onSaved={bump}
         />
       )}
     </div>
   );
 }
 
-function BpmnSection({ xml }) {
+function BpmnSection({ xml, isAdmin, onUpload, onRemove }) {
   const containerRef = useRef(null);
+  const fileRef = useRef(null);
   const { zoom, zoomIn, zoomOut, fit } = useBpmnViewer(containerRef, xml);
+
+  const adminControls = isAdmin && (
+    <div className={styles.bpmnAdmin}>
+      <Button type="button" variant="secondary" onClick={() => fileRef.current?.click()}>
+        {xml ? 'Заменить BPMN' : 'Загрузить BPMN'}
+      </Button>
+      {xml && (
+        <Button type="button" variant="secondary" onClick={onRemove}>Удалить схему</Button>
+      )}
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".bpmn,.xml,application/xml,text/xml"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (file) onUpload(file);
+        }}
+      />
+    </div>
+  );
 
   if (!xml) {
     return (
       <section className={styles.bpmnSection}>
-        <h3 className={styles.bpmnTitle}>BPMN-схема процесса</h3>
+        <div className={styles.bpmnHeader}>
+          <h3 className={styles.bpmnTitle}>BPMN-схема процесса</h3>
+          {adminControls}
+        </div>
         <div className={styles.bpmnEmpty}>Бизнес-процесс для данной функции не описан</div>
       </section>
     );
@@ -150,11 +221,14 @@ function BpmnSection({ xml }) {
     <section className={styles.bpmnSection}>
       <div className={styles.bpmnHeader}>
         <h3 className={styles.bpmnTitle}>BPMN-схема процесса</h3>
-        <div className={styles.bpmnControls}>
-          <button onClick={zoomOut} title="Уменьшить">−</button>
-          <span>{Math.round(zoom * 100)}%</span>
-          <button onClick={zoomIn} title="Увеличить">+</button>
-          <button onClick={fit} title="По размеру">⊡</button>
+        <div className={styles.bpmnHeaderRight}>
+          <div className={styles.bpmnControls}>
+            <button onClick={zoomOut} title="Уменьшить" type="button">−</button>
+            <span>{Math.round(zoom * 100)}%</span>
+            <button onClick={zoomIn} title="Увеличить" type="button">+</button>
+            <button onClick={fit} title="По размеру" type="button">⊡</button>
+          </div>
+          {adminControls}
         </div>
       </div>
       <div className={styles.bpmnCanvas} ref={containerRef} />

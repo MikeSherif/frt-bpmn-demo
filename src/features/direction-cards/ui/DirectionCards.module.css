@@ -10,3 +10,28 @@
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
 }
+
+.cardWrap {
+  position: relative;
+}
+
+.cardWrapAdmin {
+  padding-top: 36px;
+}
+
+.adminBar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.adminBar button {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}

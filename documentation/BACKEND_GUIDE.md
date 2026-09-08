@@ -68,6 +68,7 @@ CREATE TABLE functions (
     department_id   INTEGER REFERENCES departments(id),
     responsible_id  INTEGER REFERENCES employees(id),
     bpmn_xml        TEXT,                     -- полный BPMN 2.0 XML или NULL
+    sort_order      INTEGER NOT NULL DEFAULT 0,
     status          VARCHAR(30) NOT NULL DEFAULT 'Действующая',
                     -- 'Действующая' | 'На актуализации' | 'Архивная'
     created_at      TIMESTAMP DEFAULT NOW(),
@@ -84,6 +85,7 @@ CREATE INDEX idx_functions_status ON functions(status);
 - `id` — строковый, формируется по шаблону: `{КОД_НАПРАВЛЕНИЯ}-{НОМЕР}` для L1, `{КОД_L1}-{НОМЕР}` для L2
 - `bpmn_xml` — полный XML документ BPMN 2.0 (может быть большим, до нескольких МБ)
 - `parent_id` — NULL для функций 1-го уровня, ссылка на L1 для функций 2-го уровня
+- `sort_order` — порядок внутри группы (направление+уровень или parent_id)
 
 ---
 
@@ -190,6 +192,7 @@ CREATE INDEX idx_history_date ON change_history(changed_at DESC);
 | `PATCH` | `/api/functions/:id/archive` | Архивировать функцию | Админ |
 | `PUT` | `/api/functions/:id/bpmn` | Загрузить/заменить BPMN XML (body: XML string или multipart file) | Админ |
 | `DELETE` | `/api/functions/:id/bpmn` | Удалить BPMN-схему | Админ |
+| `PUT` | `/api/functions/reorder` | Изменить порядок (body: `{ orderedIds: ["ЖИ-01", "ЖИ-02", ...] }`) | Админ |
 
 **GET /api/functions — query-параметры:**
 
@@ -495,7 +498,8 @@ Cookie: session_id=...
 - [ ] Реализовать CRUD для functions (с фильтрацией + пагинацией) → заменить `function-item/model/storage.js`
 - [ ] Реализовать `GET/POST/DELETE` для function-VND связей → заменить `vnd/model/storage.js`
 - [ ] Реализовать `GET /api/functions/:id/history` → заменить `change-history/model/storage.js`
-- [ ] Реализовать `PUT /api/functions/:id/bpmn` → добавить кнопку загрузки на фронте
+- [ ] Реализовать `PUT /api/functions/:id/bpmn` и `DELETE /api/functions/:id/bpmn` (UI загрузки на фронте уже есть)
+- [ ] Реализовать `PUT /api/functions/reorder` и `PUT /api/directions/reorder` (UI ↑/↓ на фронте уже есть)
 - [ ] Реализовать `GET /api/functions/export` → заменить клиентский SpreadsheetML экспорт
 - [ ] Настроить серверную авторизацию (проверка ролей на каждом мутирующем эндпоинте)
 - [ ] Настроить автоматическое журналирование изменений на бэке

@@ -41,6 +41,13 @@ npm run build
 npm run preview
 ```
 
+## Документация
+
+- [`documentation/REPORT.md`](documentation/REPORT.md) — отчёт о реализации и соответствии ТЗ
+- [`documentation/BACKEND_GUIDE.md`](documentation/BACKEND_GUIDE.md) — контракт API и модель данных для бэкенда
+
+Файлы лежат не в `docs/`: эта папка — production-сборка GitHub Pages и очищается при `npm run build`.
+
 ## Что демонстрирует проект
 
 ### Viewer

@@ -1,4 +1,5 @@
 import { INITIAL_VNDS } from './data';
+import { notifyCatalogChanged } from '@/shared/lib/catalogSync';
 
 const STORAGE_KEY = 'catalog:vnds';
 
@@ -14,6 +15,7 @@ function readAll() {
 
 function writeAll(items) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  notifyCatalogChanged();
 }
 
 export function getAllVnds() {

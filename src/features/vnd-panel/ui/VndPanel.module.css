@@ -6,8 +6,16 @@
   min-width: 260px;
 }
 
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
 .title {
-  margin: 0 0 16px;
+  margin: 0;
   font-size: 0.95rem;
   color: #1a365d;
   font-weight: 600;
@@ -28,18 +36,50 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   padding: 12px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  text-decoration: none;
   transition: all 0.15s;
-  cursor: pointer;
 }
 
 .card:hover {
   border-color: #3182ce;
   background: #ebf8ff;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.unlink {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.75rem;
+  color: #c53030;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.unlink:hover {
+  text-decoration: underline;
+}
+
+.linkForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.linkActions {
+  display: flex;
+  gap: 8px;
 }
 
 .vndName {

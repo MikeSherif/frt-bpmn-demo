@@ -11,5 +11,6 @@ export {
   updateFunction,
   archiveFunction,
   deleteFunction,
+  reorderFunctions,
   resetFunctions,
 } from './model/storage';

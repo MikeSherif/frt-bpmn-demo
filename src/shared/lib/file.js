@@ -17,3 +17,10 @@ export function formatImportError(error) {
   const detail = error?.message ? ` ${error.message}` : '';
   return `Не удалось импортировать BPMN XML.${detail}`;
 }
+
+export function isValidBpmnXml(text) {
+  if (!text || typeof text !== 'string') return false;
+  const xml = text.trim();
+  if (!xml.startsWith('<')) return false;
+  return /<([a-zA-Z0-9]+:)?definitions[\s>]/i.test(xml) && /bpmn/i.test(xml);
+}

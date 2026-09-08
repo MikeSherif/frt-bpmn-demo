@@ -13,7 +13,7 @@ function getEmpName(id) {
   return EMPLOYEES.find((e) => e.id === id)?.name || '—';
 }
 
-export function FunctionTable({ functions, title, showDescription = true }) {
+export function FunctionTable({ functions, title, showDescription = true, sortable = false, onReorder }) {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
@@ -23,7 +23,47 @@ export function FunctionTable({ functions, title, showDescription = true }) {
     [functions, page],
   );
 
+  const move = (index, delta) => {
+    const next = index + delta;
+    if (next < 0 || next >= functions.length) return;
+    const ordered = [...functions];
+    [ordered[index], ordered[next]] = [ordered[next], ordered[index]];
+    onReorder?.(ordered.map((f) => f.id));
+  };
+
   const columns = [
+    ...(sortable
+      ? [{
+          key: 'sortOrder',
+          title: '',
+          width: '72px',
+          render: (_, row) => {
+            const idx = functions.findIndex((f) => f.id === row.id);
+            return (
+              <div className={styles.orderBtns} onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  className={styles.orderBtn}
+                  disabled={idx <= 0}
+                  onClick={() => move(idx, -1)}
+                  title="Выше"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className={styles.orderBtn}
+                  disabled={idx >= functions.length - 1}
+                  onClick={() => move(idx, 1)}
+                  title="Ниже"
+                >
+                  ↓
+                </button>
+              </div>
+            );
+          },
+        }]
+      : []),
     { key: 'id', title: 'Код', width: '100px' },
     { key: 'name', title: 'Наименование функции' },
     ...(showDescription

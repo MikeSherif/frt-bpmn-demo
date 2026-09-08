@@ -5,7 +5,15 @@ import { STATUSES } from '@/entities/function-item';
 import { DEPARTMENTS, EMPLOYEES } from '@/entities/user';
 import styles from './CatalogFilters.module.css';
 
-const EMPTY = { directionId: '', level: '', departmentId: '', responsibleId: '', hasBpmn: '', status: '' };
+const EMPTY = {
+  directionId: '',
+  level: '',
+  departmentId: '',
+  responsibleId: '',
+  hasBpmn: '',
+  hasVnd: '',
+  status: '',
+};
 
 export function CatalogFilters({ onApply, visible, onToggle }) {
   const [filters, setFilters] = useState(EMPTY);
@@ -20,6 +28,10 @@ export function CatalogFilters({ onApply, visible, onToggle }) {
     if (parsed.hasBpmn === 'true') parsed.hasBpmn = true;
     else if (parsed.hasBpmn === 'false') parsed.hasBpmn = false;
     else delete parsed.hasBpmn;
+
+    if (parsed.hasVnd === 'true') parsed.hasVnd = true;
+    else if (parsed.hasVnd === 'false') parsed.hasVnd = false;
+    else delete parsed.hasVnd;
 
     Object.keys(parsed).forEach((k) => {
       if (parsed[k] === '') delete parsed[k];
@@ -76,6 +88,15 @@ export function CatalogFilters({ onApply, visible, onToggle }) {
               ]}
               value={filters.hasBpmn}
               onChange={handleChange('hasBpmn')}
+            />
+            <Select
+              label="Наличие ВНД"
+              options={[
+                { value: 'true', label: 'Есть ВНД' },
+                { value: 'false', label: 'Нет ВНД' },
+              ]}
+              value={filters.hasVnd}
+              onChange={handleChange('hasVnd')}
             />
             <Select
               label="Статус"
