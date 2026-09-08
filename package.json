@@ -1,7 +1,7 @@
 {
   "name": "frt-bpmn-demo",
   "version": "1.0.0",
-  "description": "Vanilla JavaScript BPMN viewer and modeler demo",
+  "description": "React BPMN viewer and modeler demo (FSD architecture)",
   "private": true,
   "type": "module",
   "scripts": {
@@ -22,9 +22,13 @@
   "homepage": "https://mikesherif.github.io/frt-bpmn-demo/",
   "dependencies": {
     "bpmn-js": "^18.25.1",
-    "bpmn-js-properties-panel": "^5.65.0"
+    "bpmn-js-properties-panel": "^5.65.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.2.2"
   }
 }

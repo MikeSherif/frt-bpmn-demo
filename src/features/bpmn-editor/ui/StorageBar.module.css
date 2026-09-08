@@ -1,0 +1,24 @@
+.bar {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 13px;
+  background: #f8faff;
+  border: 1px solid var(--border);
+  border-top: 0;
+}
+
+.bar > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10px;
+}
+
+.bar small { color: var(--muted); }
+
+@media (max-width: 720px) {
+  .bar { align-items: flex-start; flex-direction: column; }
+}

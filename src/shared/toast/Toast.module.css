@@ -1,0 +1,29 @@
+.region {
+  position: fixed;
+  z-index: 1100;
+  right: 22px;
+  bottom: 22px;
+  display: grid;
+  gap: 10px;
+}
+
+.toast {
+  width: min(370px, calc(100vw - 44px));
+  padding: 13px 15px;
+  color: #fff;
+  background: #26354f;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(16, 29, 50, 0.2);
+  font-size: 12px;
+  animation: toastIn 0.2s ease-out;
+}
+
+.success { background: #16704c; }
+.error { background: #a6383c; }
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

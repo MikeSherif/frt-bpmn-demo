@@ -1,0 +1,69 @@
+.header {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(24px, calc((100vw - 1500px) / 2));
+  background: var(--navy);
+  color: white;
+  box-shadow: 0 4px 20px rgba(11, 25, 49, 0.2);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--blue);
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.brandTitle { display: block; font-size: 15px; letter-spacing: 0.01em; }
+.brandSub {
+  display: block;
+  margin-top: 3px;
+  color: #9eabc0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.tabs { align-self: stretch; display: flex; align-items: stretch; gap: 8px; }
+
+.tab {
+  position: relative;
+  min-width: 92px;
+  border: 0;
+  background: transparent;
+  color: #9eabc0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: inherit;
+  transition: color 0.2s;
+}
+
+.tab:hover, .tabActive { color: white; }
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  inset: auto 18px 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: #4c83f3;
+}
+
+@media (max-width: 800px) {
+  .header { padding: 0 16px; }
+  .brandSub { display: none; }
+}

@@ -1,0 +1,76 @@
+.editorToolbar {
+  justify-content: flex-start;
+  border-radius: 9px 9px 0 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  height: 650px;
+}
+
+.diagramCard {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background-color: #fff;
+  background-image: radial-gradient(#dce4ef 0.65px, transparent 0.65px);
+  background-size: 16px 16px;
+  border: 1px solid var(--border);
+  border-top: 0;
+  border-radius: 0 0 0 9px;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.propertiesPanel {
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-top: 0;
+  border-left: 0;
+  border-radius: 0 0 9px 0;
+}
+
+.propertiesPanel:empty::before {
+  content: 'Выберите элемент, чтобы изменить его свойства';
+  display: block;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.diagramCard :global(.djs-palette) {
+  left: 14px;
+  top: 14px;
+  border: 1px solid #dbe2ec;
+  border-radius: 7px;
+  box-shadow: 0 5px 18px rgba(25, 42, 70, 0.09);
+}
+
+.diagramCard :global(.djs-context-pad) {
+  border-radius: 7px;
+}
+
+:global(.bio-properties-panel) {
+  --header-background-color: #f8faff;
+  --group-background-color: #fff;
+  --input-background-color: #f8faff;
+  --input-border-color: #d9e1ed;
+  --input-focus-border-color: #2f6fed;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+}
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 270px; }
+}
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  .diagramCard { min-height: 560px; border-radius: 0; }
+  .propertiesPanel { min-height: 360px; border-left: 1px solid var(--border); border-radius: 0 0 9px 9px; }
+}

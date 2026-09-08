@@ -1,0 +1,39 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  min-height: 570px;
+}
+
+.diagramCard {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background-color: #fff;
+  background-image: radial-gradient(#dce4ef 0.65px, transparent 0.65px);
+  background-size: 16px 16px;
+  border: 1px solid var(--border);
+  border-top: 0;
+  border-radius: 0 0 0 9px;
+}
+
+.diagramCard:fullscreen { background-color: #fff; }
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.sidePanel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 0;
+  border-top: 0;
+  border-radius: 0 0 9px 0;
+  padding: 20px;
+}
+
+@media (max-width: 850px) {
+  .layout { grid-template-columns: 1fr; }
+  .diagramCard { min-height: 500px; border-radius: 0; }
+  .sidePanel { border-left: 1px solid var(--border); border-radius: 0 0 9px 9px; }
+}

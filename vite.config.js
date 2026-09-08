@@ -1,8 +1,14 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  // Relative paths work for gh-pages and main/docs without hard-coded repo prefix.
+  plugins: [react()],
   base: './',
+  resolve: {
+    alias: {
+      '@': import.meta.dirname + '/src',
+    },
+  },
   build: {
     outDir: 'docs',
     emptyOutDir: true,
