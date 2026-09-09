@@ -8,6 +8,7 @@ import { FunctionTable } from '@/features/function-table';
 import { FunctionForm } from '@/features/function-form';
 import { DirectionForm } from '@/features/direction-form';
 import { ExportButton } from '@/features/xlsx-export';
+import { ImportButton } from '@/features/xlsx-import';
 import { Button } from '@/shared/ui';
 import { useCatalogTick } from '@/shared/lib/catalogSync';
 import styles from './CatalogMainPage.module.css';
@@ -51,6 +52,7 @@ export function CatalogMainPage() {
           </Button>
         )}
         <ExportButton filters={filters} />
+        {isAdmin && <ImportButton onImported={bump} />}
       </div>
 
       {hasFilters ? (

@@ -8,7 +8,7 @@ import { useToast } from '@/shared/toast';
 import styles from './FunctionForm.module.css';
 
 const EMPTY = {
-  id: '', name: '', description: '', result: '',
+  id: '', name: '', description: '', result: '', npa: '',
   level: '1', directionId: '', parentId: '',
   departmentId: '', responsibleId: '',
   status: 'Действующая', bpmnXml: null,
@@ -16,7 +16,11 @@ const EMPTY = {
 
 export function FunctionForm({ open, onClose, editItem, onSaved }) {
   const isEdit = !!editItem;
-  const [form, setForm] = useState(editItem ? { ...editItem, level: String(editItem.level) } : { ...EMPTY });
+  const [form, setForm] = useState(
+    editItem
+      ? { ...EMPTY, ...editItem, level: String(editItem.level), npa: editItem.npa || '' }
+      : { ...EMPTY },
+  );
   const { showToast } = useToast();
 
   const directions = getDirections();
@@ -38,6 +42,7 @@ export function FunctionForm({ open, onClose, editItem, onSaved }) {
       departmentId: form.departmentId ? Number(form.departmentId) : null,
       responsibleId: form.responsibleId ? Number(form.responsibleId) : null,
       parentId: form.level === '2' && form.parentId ? form.parentId : null,
+      npa: (form.npa || '').trim(),
     };
 
     if (isEdit) {
@@ -84,6 +89,12 @@ export function FunctionForm({ open, onClose, editItem, onSaved }) {
         <Input label="Наименование *" id="func-name" value={form.name} onChange={set('name')} />
         <Textarea label="Описание" id="func-desc" value={form.description} onChange={set('description')} />
         <Textarea label="Результат" id="func-result" value={form.result} onChange={set('result')} />
+        <Input
+          label="НПА регулирующий функцию"
+          id="func-npa"
+          value={form.npa}
+          onChange={set('npa')}
+        />
 
         <div className={styles.row}>
           <Select

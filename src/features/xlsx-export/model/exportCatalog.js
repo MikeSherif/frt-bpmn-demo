@@ -20,7 +20,7 @@ export function exportToXlsx(filters = {}) {
 
   const headers = [
     'Направление деятельности', 'Код', 'Уровень', 'Наименование функции',
-    'Родительская функция', 'Описание', 'Результат',
+    'Родительская функция', 'Описание', 'Результат', 'НПА регулирующий функцию',
     'Ответственное подразделение', 'Ответственный',
     'Наличие BPMN', 'Связанные ВНД', 'Статус',
   ];
@@ -30,7 +30,7 @@ export function exportToXlsx(filters = {}) {
     const vnds = allVnds.filter((v) => v.functionIds.includes(f.id)).map((v) => v.name).join('; ');
     return [
       dir?.name || '', f.id, f.level, f.name,
-      f.parentId || '', f.description || '', f.result || '',
+      f.parentId || '', f.description || '', f.result || '', f.npa || '',
       getDeptName(f.departmentId), getEmpName(f.responsibleId),
       f.bpmnXml ? 'Да' : 'Нет', vnds, f.status,
     ];

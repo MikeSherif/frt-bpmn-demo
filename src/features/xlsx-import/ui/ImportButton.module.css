@@ -1,0 +1,76 @@
+.hint {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: #4a5568;
+  line-height: 1.45;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.chipCreate { background: #c6f6d5; color: #276749; }
+.chipUpdate { background: #bee3f8; color: #2b6cb0; }
+.chipError { background: #fed7d7; color: #c53030; }
+
+.tableWrap {
+  overflow: auto;
+  max-height: 360px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.table th,
+.table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #edf2f7;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: #f7fafc;
+  color: #4a5568;
+}
+
+.messages {
+  margin: 0;
+  padding-left: 16px;
+  color: #c53030;
+}
+
+.warnings {
+  margin: 4px 0 0;
+  padding-left: 16px;
+  color: #c05621;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.hiddenInput {
+  display: none;
+}

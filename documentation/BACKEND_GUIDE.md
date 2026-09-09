@@ -62,6 +62,7 @@ CREATE TABLE functions (
     name            VARCHAR(500) NOT NULL,
     description     TEXT,
     result          TEXT,                     -- результат выполнения функции
+    npa             TEXT,                     -- НПА, регулирующий функцию
     level           SMALLINT NOT NULL,        -- 1 или 2 (расширяемо до 3+)
     direction_id    INTEGER NOT NULL REFERENCES directions(id),
     parent_id       VARCHAR(20) REFERENCES functions(id),  -- NULL для L1
@@ -335,15 +336,27 @@ CREATE INDEX idx_history_date ON change_history(changed_at DESC);
 
 ---
 
-### 3.6. Экспорт
+### 3.6. Экспорт и импорт
 
 | Метод | URL | Описание | Роль |
 |---|---|---|---|
 | `GET` | `/api/functions/export` | Экспорт каталога в XLSX (принимает те же query-параметры фильтрации, что `GET /api/functions`) | Все |
+| `POST` | `/api/functions/import` | Импорт функций из XLSX/CSV (multipart `file`). Ответ: `{ created, updated, skipped, errors[] }` | Админ |
 
-**Ответ:** файл `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` с заголовком `Content-Disposition: attachment; filename="catalog.xlsx"`.
+**GET /api/functions/export — ответ:** файл `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` с заголовком `Content-Disposition: attachment; filename="catalog.xlsx"`.
 
 > Экспорт лучше формировать на бэкенде (библиотеки: `openpyxl` для Python, `exceljs` для Node.js), чтобы результат учитывал серверные фильтры и был идентичен для всех пользователей.
+
+**POST /api/functions/import — правила (как на фронте):**
+
+- колонки те же, что в п. 22 ТЗ / файле выгрузки;
+- ключ — код функции: insert или update;
+- BPMN XML из таблицы не восстанавливается (в Excel только признак наличия);
+- ВНД сопоставляются по наименованию с уже существующими документами, новые ВНД не создаются;
+- строки с ошибками валидации пропускаются, корректные применяются;
+- каждое изменение пишется в `change_history`.
+
+> В ТЗ (п. 22) описан только экспорт. Импорт — согласованное расширение, чтобы администратор мог массово актуализировать реестр тем же файлом.
 
 ---
 
@@ -501,5 +514,6 @@ Cookie: session_id=...
 - [ ] Реализовать `PUT /api/functions/:id/bpmn` и `DELETE /api/functions/:id/bpmn` (UI загрузки на фронте уже есть)
 - [ ] Реализовать `PUT /api/functions/reorder` и `PUT /api/directions/reorder` (UI ↑/↓ на фронте уже есть)
 - [ ] Реализовать `GET /api/functions/export` → заменить клиентский SpreadsheetML экспорт
+- [ ] Реализовать `POST /api/functions/import` → заменить клиентский разбор Excel/CSV
 - [ ] Настроить серверную авторизацию (проверка ролей на каждом мутирующем эндпоинте)
 - [ ] Настроить автоматическое журналирование изменений на бэке

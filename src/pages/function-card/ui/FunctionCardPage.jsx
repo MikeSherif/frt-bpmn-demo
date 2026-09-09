@@ -153,6 +153,7 @@ export function FunctionCardPage() {
               <InfoRow label="Уровень функции" value={`${func.level}-й уровень`} />
               {func.description && <InfoRow label="Описание" value={func.description} />}
               {func.result && <InfoRow label="Результат" value={func.result} />}
+              {func.npa && <InfoRow label="НПА регулирующий функцию" value={func.npa} />}
               <InfoRow label="Подразделение" value={getDeptName(func.departmentId)} />
               <InfoRow label="Ответственный" value={getEmpName(func.responsibleId)} />
               <InfoRow label="Статус" value={<Badge>{func.status}</Badge>} />
